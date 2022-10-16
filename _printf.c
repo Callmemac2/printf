@@ -1,78 +1,66 @@
 #include "main.h"
 
+void print_buffer(char buffer[], int *buff_ind);
 
 /**
- * print_letter - prints single letter
- * @format: the string format
- * @index: index of the letterin the format
- * Return: 1(length of the letter)
+ * _printf - Printf function
+ * @format: format.
+ * Return: Printed chars.
  */
-
-int print_letter(const char *format, int index)
+int _printf(const char *format, ...)
 {
-	char *str;
-	int l;
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
+	char buffer[BUFF_SIZE];
 
-	str = malloc(sizeof(char));
-
-	if (str == NULL)
+	if (format == NULL)
 		return (-1);
-	str[0] = format[index];
 
-	l = _print_buf(str, 1);
-	free(str);
+	va_start(list, format);
 
-	return (l);
+	for (i = 0; format && format[i] != '\0'; i++)
+	{
+		if (format[i] != '%')
+		{
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
+			printed_chars++;
+		}
+		else
+		{
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
+		}
+	}
+
+	print_buffer(buffer, &buff_ind);
+
+	va_end(list);
+
+	return (printed_chars);
 }
 
 /**
- * _printf - formated output and data conversation
- *
- * @format: the input string
- *
- * Return: number of characters printed
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length.
  */
-
-int _printf(const char *format, ...)
+void print_buffer(char buffer[], int *buff_ind)
 {
-	int i, len = 0, (*f)(va_list, char *), flag = 0;
-	char *buffer;
-	va_list args;
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
 
-	va_start(args, format);
-	if (!format || (format[0] == '%' && !format[1]))
-		return (-1);
-	for (i = 0; format && format[i] != '\0'; i++)
-	{
-		if (format[i] == '%')
-		{
-			f = get_pnt_funct(format, &i);
-			if (!f)
-			{
-				if ((format[i] == '\0') && flag == 0)
-				{
-					va_end(args);
-					return (-1);
-				}
-				else if (format[i] == '%')
-					len += print_letter(format, i);
-				else
-					len += print_letter(format, i - 1), flag = 1, i--;
-			}
-			else
-			{
-				buffer = malloc(sizeof(char) * 1024);
-				if (buffer == NULL)
-				{
-					va_end(args);
-					return (-1);
-				}
-				len += f(args, buffer), free(buffer);
-			}
-		}
-		else
-			len += print_letter(format, i);
-	}
-	va_end(args);
-	return (len);
+	*buff_ind = 0;
 }

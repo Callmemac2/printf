@@ -1,3 +1,7 @@
+#include "main.h"
+#include <stdio.h>
+
+
 /**
  * _printf - Receives the main string and all the necessary parameters to
  * print a formated string

@@ -1,4 +1,4 @@
-#include "main.h
+#include "main.h"
 
 /**
  * get_width - Calculates the width for printing
@@ -8,10 +8,10 @@
  *
  * Return: width.
  */
-int get_width(const char *formay, int *i, va_list list)
+int get_width(const char *format, int *i, va_list list)
 {
 	int curr_i;
-	int wdth = 0
+	int width = 0;
 
 	for (curr_i = *i + 1; format[curr_i] != '\0'; curr_i++)
 	{

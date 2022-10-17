@@ -1,4 +1,4 @@
-#include "main.h
+#include "main.h"
 
 /************************* PRINT UNSIGNED NUMBER *************************/
 /**
@@ -21,12 +21,12 @@ int print_unsigned(va_list types, char buffer[],
 
 	if (num == 0)
 		buffer[i--] = '0';
-
+	
 	buffer[BUFF_SIZE - 1] = '\0';
 
 	while (num > 0)
 	{
-		buffer[i--] = (num % 10) + '0';
+		[i--] = (num % 10) + '0';
 		num /= 10;
 	}
 
